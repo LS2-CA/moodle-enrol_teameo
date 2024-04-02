@@ -35,3 +35,16 @@ $string['teameo:config'] = 'Configure Teameo enrol instances';
 $string['teameo:enrol'] = 'Enrol users';
 $string['teameo:unenrol'] = 'Unenrol users from the course';
 
+$string['privacy:metadata:user_profile_data'] = 'This plugin reads user profiles from Moodle.';
+$string['privacy:metadata:user_profile_data:userid'] = 'The ID of the user being read.';
+$string['privacy:metadata:user_profile_data:email'] = 'The email of the user being read.';
+$string['privacy:metadata:user_profile_data:firstname'] = 'The first name of the user.';
+$string['privacy:metadata:user_profile_data:lastname'] = 'The last name of the user.';
+$string['privacy:metadata:core_user'] = 'Integrates with the core user system to read user profiles.';
+
+$string['privacy:metadata:external_system_user_creation'] = 'This plugin sends user data to an external system for user record creation.';
+$string['privacy:metadata:external_system_user_creation:external_userid'] = 'The user ID in the external system.';
+$string['privacy:metadata:external_system_user_creation:external_email'] = 'The email of the user in the external system.';
+
+
+

@@ -33,5 +33,17 @@ $string['wsusercannotassign'] = 'No tienes permiso para asignar este rol. ({$a->
 
 $string['teameo:config'] = 'Configurar instancias de inscripción de Teameo';
 $string['teameo:enrol'] = 'Inscribir usuarias';
-$string['teameo:unenrol'] = 'Dar de baja a los usuarios del curso';
+$string['teameo:unenrol'] = 'Dar de baja a los usuarios del curso';.
+
+$string['privacy:metadata:user_profile_data'] = 'Este complemento lee perfiles de usuario de Moodle.';
+$string['privacy:metadata:user_profile_data:userid'] = 'El ID del usuario que se está leyendo.';
+$string['privacy:metadata:user_profile_data:email'] = 'El correo electrónico del usuario siendo leído.';
+$string['privacy:metadata:user_profile_data:firstname'] = 'El primer nombre del usuario.';
+$string['privacy:metadata:user_profile_data:lastname'] = 'El apellido del usuario.';
+$string['privacy:metadata:core_user'] = 'Se integra con el sistema de usuario principal para leer perfiles de usuario.';
+
+$string['privacy:metadata:external_system_user_creation'] = 'Este complemento envía datos del usuario a un sistema externo para la creación de registros de usuario.';
+$string['privacy:metadata:external_system_user_creation:external_userid'] = 'El ID de usuario en el sistema externo.';
+$string['privacy:metadata:external_system_user_creation:external_email'] = 'El correo electrónico del usuario en el sistema externo.';
+
 
