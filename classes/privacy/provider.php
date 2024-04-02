@@ -21,14 +21,25 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
 use core_privacy\local\metadata\collection;
 use core_privacy\local\metadata\external_location;
 
+/**
+ * Data provider for enrol_Teameo.
+ *
+ * @copyright  2023 Teameo.io
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class provider implements
     \core_privacy\local\metadata\provider,
     \core_privacy\local\request\data_provider {
 
+     /**
+     * Returns meta data about this system.
+     *
+     * @param collection $collection The initialised collection to add items to.
+     * @return collection A listing of user data stored through this system.
+     */
     public static function get_metadata(collection $collection) : collection {
         // Details about reading user profiles.
         $collection->add_data_source('user_profile_data', [
