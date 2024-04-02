@@ -33,7 +33,7 @@ $string['wsusercannotassign'] = 'No tienes permiso para asignar este rol. ({$a->
 
 $string['teameo:config'] = 'Configurar instancias de inscripción de Teameo';
 $string['teameo:enrol'] = 'Inscribir usuarias';
-$string['teameo:unenrol'] = 'Dar de baja a los usuarios del curso';.
+$string['teameo:unenrol'] = 'Dar de baja a los usuarios del curso';
 
 $string['privacy:metadata:user_profile_data'] = 'Este complemento lee perfiles de usuario de Moodle.';
 $string['privacy:metadata:user_profile_data:userid'] = 'El ID del usuario que se está leyendo.';
