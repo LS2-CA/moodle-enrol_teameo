@@ -81,15 +81,15 @@ class get_enrolled_users extends \external_api {
     }
 
      /**
-     * Get course participants details
-     *
-     * @param int $courseid  course id
-     * @param array $options options {
-     *                                'name' => option name
-     *                                'value' => option value
-     *                               }
-     * @return array An array of users
-     */
+      * Get course participants details
+      *
+      * @param int $courseid  course id
+      * @param array $options options {
+      *                                'name' => option name
+      *                                'value' => option value
+      *                               }
+      * @return array An array of users
+      */
     public static function execute($courseid, $options = []) {
         global $CFG, $USER, $DB;
 

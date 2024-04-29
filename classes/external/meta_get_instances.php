@@ -54,7 +54,7 @@ class meta_get_instances extends \external_api {
         );
     }
 
-     /**
+    /**
      * Get course meta enrolment instances
      *
      * @param int $courseid  course id

@@ -100,7 +100,7 @@ $services = array(
             'mod_assign_list_participants',
             'core_course_search_courses',
             'core_enrol_get_enrolled_users',
-            // Course meta link functions
+            // Course meta link functions.
             'enrol_meta_add_instances',
             'enrol_meta_delete_instances',
 
