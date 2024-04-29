@@ -25,7 +25,7 @@ We thrive on your feedback and contributions. Here are a few ways you can help i
 
 ## 📞 Contact Us
 
-Need direct assistance or looking to collaborate? Reach out directly at [info@teameo.io](mailto:info@teameo.io), or follow us on [LinkedIn](https://www.linkedin.com/company/teameo) for the latest updates.
+Need direct assistance or looking to collaborate? Reach out directly at [info@teameo.io](mailto:info@teameo.io), or follow us on [LinkedIn](https://www.linkedin.com/company/teameo-io/) for the latest updates.
 
 ---
 
