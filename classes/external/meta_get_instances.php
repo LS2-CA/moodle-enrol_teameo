@@ -55,10 +55,11 @@ class meta_get_instances extends \external_api {
     }
 
     /**
-     * Get course meta enrolment instances
+     * Get course meta enrolment instances.
      *
-     * @param  int $courseid course id
-     * @return array An array of child ids
+     * @param  int   $courseid The ID of the course.
+     * @param  array $options  Additional options (optional).
+     * @return array An array of child ids of the course.
      */
     public static function execute($courseid, $options = []) {
         global $CFG, $DB;
