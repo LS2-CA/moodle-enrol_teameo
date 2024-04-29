@@ -17,9 +17,10 @@
 /**
  * Strings for component 'enrol_teameo', language 'fr'.
  *
- * @package    enrol_teameo
- * @copyright  2023 Teameo.io
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_teameo
+ * @copyright 2024 Teameo.io
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @link      https://teameo.io
  */
 
 $string['pluginname'] = 'Inscriptions Teameo';

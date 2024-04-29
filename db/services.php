@@ -17,11 +17,10 @@
 /**
  * Teameo enrolment plugin external functions and service definitions.
  *
- * Special Thanks to contributor : Jason Maur <maur.jason@uqam.ca> (Université du Québec à Montréal)
- *
- * @package    enrol_teameo
- * @copyright  2023 Teameo.io
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_teameo
+ * @copyright 2024 Teameo.io
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @link      https://teameo.io
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -63,6 +62,15 @@ $functions = array(
         'type'         => 'read',
         'services'     => array('teameo_enrol_ws', 'teameo_ws'),
     ),
+
+    'enrol_teameo_meta_get_instances' => array(
+        'classname'   => 'enrol_teameo\external\meta_get_instances',
+        'methodname'  => 'execute',
+        'description'  => 'Get course enrolled users with Teameo method',
+        'capabilities' => 'enrol/teameo:config',
+        'type'         => 'read',
+        'services'     => array('teameo_enrol_ws', 'teameo_ws'),
+    ),
 );
 
 $services = array(
@@ -72,6 +80,7 @@ $services = array(
             'core_course_delete_courses',
             'core_course_get_categories',
             'core_course_get_courses_by_field',
+            'core_course_get_courses',
             'core_course_update_courses',
             'core_enrol_get_users_courses',
             'core_user_create_users',
@@ -86,13 +95,20 @@ $services = array(
             'core_group_delete_groups',
             'core_course_import_course',
             'core_course_create_categories',
+            'core_enrol_get_course_enrolment_methods',
             'mod_assign_get_assignments',
             'mod_assign_list_participants',
+            'core_course_search_courses',
+            'core_enrol_get_enrolled_users',
+            // Course meta link functions
+            'enrol_meta_add_instances',
+            'enrol_meta_delete_instances',
 
             // Teameo custom functions.
             'enrol_teameo_enrol_users',
             'enrol_teameo_unenrol_users_teameo',
-            'enrol_teameo_get_enrolled_users'
+            'enrol_teameo_get_enrolled_users',
+            'enrol_teameo_meta_get_instances'
         ),
         'enabled' => 1,
         'restrictedusers' => 1,

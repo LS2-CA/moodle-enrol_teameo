@@ -17,11 +17,10 @@
 /**
  * Teameo enrolment external functions.
  *
- * Special Thanks to contributor : Jason Maur <maur.jason@uqam.ca> (Université du Québec à Montréal)
- *
- * @package    enrol_teameo
- * @copyright  2023 Teameo.io
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_teameo
+ * @copyright 2024 Teameo.io
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @link      https://teameo.io
  */
 
 namespace enrol_teameo\external;
@@ -35,9 +34,10 @@ require_once("{$CFG->libdir}/externallib.php");
 /**
  * External function for enrolling users to courses.
  *
- * @package    enrol_teameo
- * @copyright  2023 Teameo.io
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_teameo
+ * @copyright 2024 Teameo.io
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @link      https://teameo.io
  */
 class get_enrolled_users extends \external_api {
 
@@ -81,15 +81,15 @@ class get_enrolled_users extends \external_api {
     }
 
      /**
-      * Get course participants details
-      *
-      * @param int $courseid  course id
-      * @param array $options options {
-      *                                'name' => option name
-      *                                'value' => option value
-      *                               }
-      * @return array An array of users
-      */
+     * Get course participants details
+     *
+     * @param int $courseid  course id
+     * @param array $options options {
+     *                                'name' => option name
+     *                                'value' => option value
+     *                               }
+     * @return array An array of users
+     */
     public static function execute($courseid, $options = []) {
         global $CFG, $USER, $DB;
 

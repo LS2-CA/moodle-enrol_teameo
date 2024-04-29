@@ -16,9 +16,10 @@
 /**
  * Privacy provider.
  *
- * @package    enrol_teameo
- * @copyright  2023 Teameo.io
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_teameo
+ * @copyright 2024 Teameo.io
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @link      https://teameo.io
  */
 
 use core_privacy\local\metadata\collection;
@@ -27,8 +28,10 @@ use core_privacy\local\metadata\external_location;
 /**
  * Data provider for enrol_Teameo.
  *
- * @copyright  2023 Teameo.io
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_teameo
+ * @copyright 2024 Teameo.io
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @link      https://teameo.io
  */
 class provider implements
     \core_privacy\local\metadata\provider,

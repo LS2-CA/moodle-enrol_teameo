@@ -17,15 +17,16 @@
 /**
  * Teameo enrolment plugin version specification.
  *
- * @package    enrol_teameo
- * @copyright  2023 Teameo.io
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_teameo
+ * @copyright 2024 Teameo.io
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @link      https://teameo.io
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'enrol_teameo';    // Full name of the plugin (used for diagnostics).
-$plugin->version   = 2024040200;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->release   = 'v0.6';
+$plugin->version   = 2024042800;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->release   = 'v0.8.5';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2020061500;        // Requires this Moodle version.

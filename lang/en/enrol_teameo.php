@@ -17,9 +17,10 @@
 /**
  * Strings for component 'enrol_teameo', language 'en'.
  *
- * @package    enrol_teameo
- * @copyright  2023 Teameo.io
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_teameo
+ * @copyright 2024 Teameo.io
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @link      https://teameo.io
  */
 
 $string['pluginname'] = 'Teameo enrolments';
@@ -34,7 +35,6 @@ $string['wsusercannotassign'] = 'You don\'t have the permission to assign this r
 $string['teameo:config'] = 'Configure Teameo enrol instances';
 $string['teameo:enrol'] = 'Enrol users';
 $string['teameo:unenrol'] = 'Unenrol users from the course';
-
 $string['privacy:metadata:user_profile_data'] = 'This plugin reads user profiles from Moodle.';
 $string['privacy:metadata:user_profile_data:userid'] = 'The ID of the user being read.';
 $string['privacy:metadata:user_profile_data:email'] = 'The email of the user being read.';
