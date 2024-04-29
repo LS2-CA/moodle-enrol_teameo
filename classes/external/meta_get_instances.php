@@ -57,7 +57,7 @@ class meta_get_instances extends \external_api {
     /**
      * Get course meta enrolment instances
      *
-     * @param int $courseid  course id
+     * @param  int $courseid course id
      * @return array An array of child ids
      */
     public static function execute($courseid, $options = []) {
@@ -71,7 +71,7 @@ class meta_get_instances extends \external_api {
         );
 
         $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
-        
+
         // Ensure the current user is allowed to access metacourse.
         $coursecontext = \context_course::instance($courseid, IGNORE_MISSING);
         try {
