@@ -68,11 +68,6 @@ jobs:
         with:
           path: plugin
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16' # You can specify the required Node.js version here
-
       # Install PHP of required version. For possible options see https://github.com/shivammathur/setup-php
       - name: Setup PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
@@ -95,33 +90,18 @@ jobs:
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
 
       # Run the default install.
-      # Optionally, it is possible to specify a different Moodle repo to use
-      # (https://github.com/moodle/moodle.git is used by default) and define
-      # ignore directives or any other env vars for install step.  For more
-      # details on configuring for specific requirements please refer to the
-      # 'Help' page.
-      #
-      # env:
-      #   MOODLE_REPO=https://github.com/username/moodle.git
-      #   IGNORE_PATHS: 'ignore'
-      #   IGNORE_NAMES: 'ignore_name.php'
-      #   MUSTACHE_IGNORE_NAMES: 'broken.mustache'
-      #   CODECHECKER_IGNORE_PATHS: 'ignoreme'
-      #   CODECHECKER_IGNORE_NAMES: 'ignoreme_name.php'
-      #
-      # Other env vars are available for install, namely:
-      #   - DB_USER / DB_PASS / DB_NAME / DB_HOST / DB_PORT: used
-      #     by install to feed the corresponding --db-xxxx options.
-      #   - MOODLE_APP: used to install dependencies to run Behat tests
-      #     using the Moodle App.
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16' # Specify the required version of Node.js
+
+      # Install moodle-plugin-ci
       - name: Install moodle-plugin-ci
         run: |
           moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
-          # Uncomment this to run Behat tests using the Moodle App.
-          # MOODLE_APP: 'true'
 
       # Steps that are run for the purpose of testing.  Any of these steps
       # can be re-ordered or removed to your liking.  And of course, you can
