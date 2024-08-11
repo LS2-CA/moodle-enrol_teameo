@@ -109,12 +109,12 @@ $services = array(
             'enrol_teameo_enrol_users',
             'enrol_teameo_unenrol_users_teameo',
             'enrol_teameo_get_enrolled_users',
-            'enrol_teameo_meta_get_instances'
+            'enrol_teameo_meta_get_instances',
         ),
         'enabled' => 1,
         'restrictedusers' => 1,
         'downloadfiles' => 1,
         "uploadfiles" => 1,
-        'shortname' => 'teameo_enrol_ws'
+        'shortname' => 'teameo_enrol_ws',
     ),
 );
