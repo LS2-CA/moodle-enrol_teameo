@@ -98,7 +98,7 @@ $services = array(
             'mod_assign_get_assignments',
             'mod_assign_list_participants',
             'core_course_search_courses',
-            'core_course_get_course_module'
+            'core_course_get_course_module',
             'core_enrol_get_enrolled_users',
 
             // Course meta link functions.
