@@ -68,10 +68,10 @@ class enrol_users extends \external_api {
                                 PARAM_INT,
                                 'set to 1 to suspend the enrolment',
                                 VALUE_OPTIONAL
-                            )
+                            ),
                         )
                     )
-                )
+                ),
             )
         );
     }

@@ -57,7 +57,7 @@ class unenrol_users extends \external_api {
                             'roleid' => new \external_value(PARAM_INT, 'The user role', VALUE_OPTIONAL),
                         )
                     )
-                )
+                ),
             )
         );
     }

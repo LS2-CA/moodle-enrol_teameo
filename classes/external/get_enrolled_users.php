@@ -54,7 +54,7 @@ class get_enrolled_users extends \external_api {
                     new \external_single_structure(
                         [
                             'name'  => new \external_value(PARAM_ALPHANUMEXT, 'option name'),
-                            'value' => new \external_value(PARAM_RAW, 'option value')
+                            'value' => new \external_value(PARAM_RAW, 'option value'),
                         ]
                     ), 'Option names:
                             * withcapability (string) return only users with this capability. This option
@@ -75,7 +75,7 @@ class get_enrolled_users extends \external_api {
                             * limitnumber (integer) maximum number of returned users.
                             * sortby (string) sort by id, firstname or lastname. For ordering like the site does, use siteorder.
                             * sortdirection (string) ASC or DESC',
-                            VALUE_DEFAULT, [])
+                            VALUE_DEFAULT, []),
             ]
         );
     }
@@ -303,7 +303,7 @@ class get_enrolled_users extends \external_api {
                                 'roleid'       => new \external_value(PARAM_INT, 'role id'),
                                 'name'         => new \external_value(PARAM_RAW, 'role name'),
                                 'shortname'    => new \external_value(PARAM_ALPHANUMEXT, 'role shortname'),
-                                'sortorder'    => new \external_value(PARAM_INT, 'role sortorder')
+                                'sortorder'    => new \external_value(PARAM_INT, 'role sortorder'),
                             ]
                         ), 'user roles', VALUE_OPTIONAL),
                     'preferences' => new \external_multiple_structure(
@@ -318,9 +318,9 @@ class get_enrolled_users extends \external_api {
                             [
                                 'id'  => new \external_value(PARAM_INT, 'Id of the course'),
                                 'fullname' => new \external_value(PARAM_RAW, 'Fullname of the course'),
-                                'shortname' => new \external_value(PARAM_RAW, 'Shortname of the course')
+                                'shortname' => new \external_value(PARAM_RAW, 'Shortname of the course'),
                             ]
-                    ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL)
+                    ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL),
                 ]
             )
         );

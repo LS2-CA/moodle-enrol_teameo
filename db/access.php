@@ -32,7 +32,7 @@ $capabilities = array(
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'manager' => CAP_ALLOW,
-        )
+        ),
     ),
 
     'enrol/teameo:enrol' => array(
@@ -40,7 +40,7 @@ $capabilities = array(
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'manager' => CAP_ALLOW,
-        )
+        ),
     ),
 
     'enrol/teameo:unenrol' => array(
@@ -48,6 +48,6 @@ $capabilities = array(
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'manager' => CAP_ALLOW,
-        )
-    )
+        ),
+    ),
 );
