@@ -68,6 +68,11 @@ jobs:
         with:
           path: plugin
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16' # You can specify the required Node.js version here
+
       # Install PHP of required version. For possible options see https://github.com/shivammathur/setup-php
       - name: Setup PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
