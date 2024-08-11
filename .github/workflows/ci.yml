@@ -89,11 +89,13 @@ jobs:
           sudo locale-gen en_AU.UTF-8
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
 
-      # Run the default install.
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16' # Specify the required version of Node.js
+      # Manually install Node.js using nvm
+      - name: Install Node.js using nvm
+        run: |
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
+          source ~/.nvm/nvm.sh
+          nvm install 16  # Specify the Node.js version
+          nvm use 16
 
       # Install moodle-plugin-ci
       - name: Install moodle-plugin-ci
