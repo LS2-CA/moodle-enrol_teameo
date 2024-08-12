@@ -26,56 +26,56 @@
 defined('MOODLE_INTERNAL') || die();
 
 // Teameo enrol related functions.
-$functions = array(
-    'enrol_teameo_enrol_users' => array(
+$functions = [
+    'enrol_teameo_enrol_users' => [
         'classname'   => 'enrol_teameo\external\enrol_users',
         'methodname'  => 'execute',
         'description'  => 'Enrol users with Teameo method',
         'capabilities' => 'enrol/teameo:enrol',
         'type'         => 'write',
-        'services'     => array('teameo_enrol_ws', 'teameo_ws'),
-    ),
+        'services'     => ['teameo_enrol_ws', 'teameo_ws'],
+    ],
 
-    'enrol_teameo_unenrol_users_teameo' => array(
+    'enrol_teameo_unenrol_users_teameo' => [
         'classname'   => 'enrol_teameo\external\unenrol_users_teameo',
         'methodname'  => 'execute',
         'description'  => 'Unenrol users by Teameo method',
         'capabilities' => 'enrol/teameo:unenrol',
         'type'         => 'write',
-        'services'     => array('teameo_enrol_ws', 'teameo_ws'),
-    ),
+        'services'     => ['teameo_enrol_ws', 'teameo_ws'],
+    ],
 
-    'enrol_teameo_unenrol_users' => array(
+    'enrol_teameo_unenrol_users' => [
         'classname'   => 'enrol_teameo\external\unenrol_users',
         'methodname'  => 'execute',
         'description'  => 'Unenrol users by Teameo and manual methods',
         'capabilities' => 'enrol/teameo:unenrol',
         'type'         => 'write',
-        'services'     => array('teameo_ws'),
-    ),
+        'services'     => ['teameo_ws'],
+    ],
 
-    'enrol_teameo_get_enrolled_users' => array(
+    'enrol_teameo_get_enrolled_users' => [
         'classname'   => 'enrol_teameo\external\get_enrolled_users',
         'methodname'  => 'execute',
         'description'  => 'Get course enrolled users with Teameo method',
         'capabilities' => 'enrol/teameo:config',
         'type'         => 'read',
-        'services'     => array('teameo_enrol_ws', 'teameo_ws'),
-    ),
+        'services'     => ['teameo_enrol_ws', 'teameo_ws'],
+    ],
 
-    'enrol_teameo_meta_get_instances' => array(
+    'enrol_teameo_meta_get_instances' => [
         'classname'   => 'enrol_teameo\external\meta_get_instances',
         'methodname'  => 'execute',
         'description'  => 'Get course enrolled users with Teameo method',
         'capabilities' => 'enrol/teameo:config',
         'type'         => 'read',
-        'services'     => array('teameo_enrol_ws', 'teameo_ws'),
-    ),
-);
+        'services'     => ['teameo_enrol_ws', 'teameo_ws'],
+    ],
+];
 
-$services = array(
-    'Teameo Enrol Integration'  => array(
-        'functions' => array(
+$services = [
+    'Teameo Enrol Integration'  => [
+        'functions' => [
             'core_course_create_courses',
             'core_course_delete_courses',
             'core_course_get_categories',
@@ -110,11 +110,11 @@ $services = array(
             'enrol_teameo_unenrol_users_teameo',
             'enrol_teameo_get_enrolled_users',
             'enrol_teameo_meta_get_instances',
-        ),
+        ],
         'enabled' => 1,
         'restrictedusers' => 1,
         'downloadfiles' => 1,
-        "uploadfiles" => 1,
+        'uploadfiles' => 1,
         'shortname' => 'teameo_enrol_ws',
-    ),
-);
+    ],
+];

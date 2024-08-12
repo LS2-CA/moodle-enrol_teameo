@@ -47,10 +47,10 @@ class enrol_users extends \external_api {
      */
     public static function execute_parameters() {
         return new \external_function_parameters(
-            array(
+            [
                 'enrolments' => new \external_multiple_structure(
                     new \external_single_structure(
-                        array(
+                        [
                             'roleid' => new \external_value(PARAM_INT, 'Role to assign to the user'),
                             'userid' => new \external_value(PARAM_INT, 'The user that is going to be enrolled'),
                             'courseid' => new \external_value(PARAM_INT, 'The course to enrol the user role in'),
@@ -69,10 +69,10 @@ class enrol_users extends \external_api {
                                 'set to 1 to suspend the enrolment',
                                 VALUE_OPTIONAL
                             ),
-                        )
+                        ]
                     )
                 ),
-            )
+            ]
         );
     }
 
@@ -89,7 +89,7 @@ class enrol_users extends \external_api {
 
         $params = self::validate_parameters(
             self::execute_parameters(),
-            array('enrolments' => $enrolments)
+            ['enrolments' => $enrolments]
         );
 
         $transaction = $DB->start_delegated_transaction(); // Rollback all enrolment if an error occurs
@@ -132,9 +132,9 @@ class enrol_users extends \external_api {
             // No instance found. Check permissions and add automatically if we can.
             if (empty($instance)) {
                 if ($enrol->can_add_instance($enrolment['courseid'])) {
-                    $course = $DB->get_record('course', array('id' => $enrolment['courseid']));
+                    $course = $DB->get_record('course', ['id' => $enrolment['courseid']]);
                     $instanceid = $enrol->add_instance($course);
-                    $instance = $DB->get_record('enrol', array('id' => $instanceid));
+                    $instance = $DB->get_record('enrol', ['id' => $instanceid]);
                 } else {
                     $errorparams = new \stdClass();
                     $errorparams->courseid = $enrolment['courseid'];

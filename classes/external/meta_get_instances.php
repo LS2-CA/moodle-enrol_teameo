@@ -68,10 +68,10 @@ class meta_get_instances extends \external_api {
 
         $params = self::validate_parameters(
             self::execute_parameters(),
-            array('courseid' => $courseid)
+            ['courseid' => $courseid]
         );
 
-        $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
+        $course = $DB->get_record('course', ['id' => $params['courseid']], '*', MUST_EXIST);
 
         // Ensure the current user is allowed to access metacourse.
         $coursecontext = \context_course::instance($courseid, IGNORE_MISSING);
@@ -82,7 +82,7 @@ class meta_get_instances extends \external_api {
             throw new \invalid_parameter_exception('Unauthorized access to course');
         }
 
-        $result = array();
+        $result = [];
         $enrolinstances = enrol_get_instances($params['courseid'], false);
         foreach ($enrolinstances as $enrolinstance) {
             if ($enrolinstance->enrol == 'meta') {

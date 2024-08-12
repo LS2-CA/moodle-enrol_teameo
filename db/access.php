@@ -25,29 +25,29 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
+$capabilities = [
     /* Add, edit or remove teameo enrol instance. */
-    'enrol/teameo:config' => array(
+    'enrol/teameo:config' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
-        ),
-    ),
+        ],
+    ],
 
-    'enrol/teameo:enrol' => array(
+    'enrol/teameo:enrol' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
-        ),
-    ),
+        ],
+    ],
 
-    'enrol/teameo:unenrol' => array(
+    'enrol/teameo:unenrol' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
-        ),
-    ),
-);
+        ],
+    ],
+];

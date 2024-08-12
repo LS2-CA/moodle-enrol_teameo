@@ -98,7 +98,7 @@ class get_enrolled_users extends \external_api {
 
         $params = self::validate_parameters(
             self::execute_parameters(),
-            array('courseid' => $courseid, 'options' => $options)
+            ['courseid' => $courseid, 'options' => $options]
         );
 
         $withcapability = '';
@@ -212,7 +212,7 @@ class get_enrolled_users extends \external_api {
             }
         }
 
-        $instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'teameo'));
+        $instance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'teameo']);
 
         $sql = "SELECT us.*, COALESCE(ul.timeaccess, 0) AS lastcourseaccess
                   FROM {user} us

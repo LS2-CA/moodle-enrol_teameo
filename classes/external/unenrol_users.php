@@ -48,17 +48,17 @@ class unenrol_users extends \external_api {
      */
     public static function execute_parameters() {
         return new \external_function_parameters(
-            array(
+            [
                 'enrolments' => new \external_multiple_structure(
                     new \external_single_structure(
-                        array(
+                        [
                             'userid' => new \external_value(PARAM_INT, 'The user that is going to be unenrolled'),
                             'courseid' => new \external_value(PARAM_INT, 'The course to unenrol the user from'),
                             'roleid' => new \external_value(PARAM_INT, 'The user role', VALUE_OPTIONAL),
-                        )
+                        ]
                     )
                 ),
-            )
+            ]
         );
     }
 
@@ -75,7 +75,7 @@ class unenrol_users extends \external_api {
      */
     public static function execute($enrolments) {
         global $CFG, $DB;
-        $params = self::validate_parameters(self::execute_parameters(), array('enrolments' => $enrolments));
+        $params = self::validate_parameters(self::execute_parameters(), ['enrolments' => $enrolments]);
         require_once($CFG->libdir . '/enrollib.php');
         $transaction = $DB->start_delegated_transaction(); // Rollback all enrolment if an error occurs.
 
@@ -90,12 +90,12 @@ class unenrol_users extends \external_api {
             $context = \context_course::instance($enrolment['courseid']);
             self::validate_context($context);
 
-            $instanceteameo = $DB->get_record('enrol', array('courseid' => $enrolment['courseid'], 'enrol' => 'teameo'));
+            $instanceteameo = $DB->get_record('enrol', ['courseid' => $enrolment['courseid'], 'enrol' => 'teameo']);
             if ($instanceteameo) {
                 require_capability('enrol/teameo:unenrol', $context);
             }
 
-            $instancemanual = $DB->get_record('enrol', array('courseid' => $enrolment['courseid'], 'enrol' => 'manual'));
+            $instancemanual = $DB->get_record('enrol', ['courseid' => $enrolment['courseid'], 'enrol' => 'manual']);
             if ($instancemanual) {
                 require_capability('enrol/manual:unenrol', $context);
             }
@@ -103,7 +103,7 @@ class unenrol_users extends \external_api {
             if (!$instanceteameo && !$instancemanual) {
                 throw new \moodle_exception('wsnoinstance', 'enrol_teameo', $enrolment);
             }
-            $user = $DB->get_record('user', array('id' => $enrolment['userid']));
+            $user = $DB->get_record('user', ['id' => $enrolment['userid']]);
             if (!$user) {
                 throw new \invalid_parameter_exception('User id not exist: ' . $enrolment['userid']);
             }
