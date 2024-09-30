@@ -45,6 +45,17 @@ class enrol_teameo_plugin extends enrol_plugin {
     }
 
     /**
+     * Is it possible to delete enrol instance via standard UI?
+     *
+     * @param stdClass  $instance
+     * @return bool
+     */
+    public function can_delete_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/teameo:config', $context);
+    }
+
+    /**
      *
      * Returns true if the current user can add a new instance of enrolment plugin in course.
      *
