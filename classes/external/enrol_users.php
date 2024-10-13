@@ -119,15 +119,12 @@ class enrol_users extends \external_api {
                 throw new \moodle_exception('wsusercannotassign', 'enrol_teameo', '', $errorparams);
             }
 
-            // Check manual enrolment plugin instance is enabled/exist.
-            $instance = null;
-            $enrolinstances = enrol_get_instances($enrolment['courseid'], true);
-            foreach ($enrolinstances as $courseenrolinstance) {
-                if ($courseenrolinstance->enrol == "teameo") {
-                    $instance = $courseenrolinstance;
-                    break;
-                }
-            }
+            // Check teameo enrolment plugin instance is enabled/exist
+            // To avoid duplicate instances in concurrent requests, we lock the row using "FOR UPDATE" clause.
+            $instancesql = "SELECT * FROM {enrol} WHERE courseid=:courseid AND enrol='teameo' AND status=". ENROL_INSTANCE_ENABLED ." FOR UPDATE";
+            $instancesqlparams['courseid'] = $enrolment['courseid'];
+
+            $instance = $DB->get_record_sql($instancesql, $instancesqlparams);
 
             // No instance found. Check permissions and add automatically if we can.
             if (empty($instance)) {
