@@ -121,7 +121,8 @@ class enrol_users extends \external_api {
 
             // Check teameo enrolment plugin instance is enabled/exist
             // To avoid duplicate instances in concurrent requests, we lock the row using "FOR UPDATE" clause.
-            $instancesql = "SELECT * FROM {enrol} WHERE courseid=:courseid AND enrol='teameo' AND status=". ENROL_INSTANCE_ENABLED ." FOR UPDATE";
+            $instancesql = "SELECT * FROM {enrol} WHERE courseid=:courseid AND enrol='teameo' " .
+               "AND status=" . ENROL_INSTANCE_ENABLED . " FOR UPDATE";
             $instancesqlparams['courseid'] = $enrolment['courseid'];
 
             $instance = $DB->get_record_sql($instancesql, $instancesqlparams);
