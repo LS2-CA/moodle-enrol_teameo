@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'enrol_teameo';    // Full name of the plugin (used for diagnostics).
-$plugin->version   = 2024102000;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->release   = 'v0.9.4';
+$plugin->version   = 2025011600;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->release   = 'v0.9.5';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2020061500;        // Requires this Moodle version.

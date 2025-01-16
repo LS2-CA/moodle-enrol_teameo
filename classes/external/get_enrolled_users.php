@@ -233,6 +233,22 @@ class get_enrolled_users extends \external_api {
         foreach ($enrolledusers as $user) {
             \context_helper::preload_from_record($user);
             if ($userdetails = user_get_user_details($user, $course, $userfields)) {
+                // Filter roles to get only the ones from the enrol_teameo component.
+                $roles = get_user_roles($context, $user->id, false);
+                $teameoroles = array_filter($roles, function($obj) {
+                    return $obj->component === 'enrol_teameo';
+                });
+
+                $userdetails['roles'] = [];
+                foreach ($teameoroles as $role) {
+                    $userdetails['roles'][] = array(
+                        'roleid'       => $role->roleid,
+                        'name'         => $role->name,
+                        'shortname'    => $role->shortname,
+                        'sortorder'    => $role->sortorder
+                    );
+                }
+                
                 $users[] = $userdetails;
             }
         }
