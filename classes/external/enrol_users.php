@@ -84,75 +84,106 @@ class enrol_users extends \external_api {
      */
     public static function execute($enrolments) {
         global $DB, $CFG;
-
+    
         require_once($CFG->libdir . '/enrollib.php');
-
+    
         $params = self::validate_parameters(
             self::execute_parameters(),
-            ['enrolments' => $enrolments]
+            array('enrolments' => $enrolments)
         );
-
+    
         $transaction = $DB->start_delegated_transaction(); // Rollback all enrolment if an error occurs
         // (except if the DB doesn't support it).
-
+    
         // Retrieve the teameo enrolment plugin.
         $enrol = enrol_get_plugin('teameo');
         if (empty($enrol)) {
             throw new \moodle_exception('teameopluginnotinstalled', 'enrol_teameo');
         }
-
+    
         foreach ($params['enrolments'] as $enrolment) {
             // Ensure the current user is allowed to run this function in the enrolment context.
             $context = \context_course::instance($enrolment['courseid'], IGNORE_MISSING);
             self::validate_context($context);
-
+    
             // Check that the user has the permission to enrol via Teameo.
             require_capability('enrol/teameo:enrol', $context);
-
+    
             // Throw an exception if user is not able to assign the role.
-            $roles = get_assignable_roles($context);
-            if (!array_key_exists($enrolment['roleid'], $roles)) {
+            $userroles = get_assignable_roles($context);
+            if (!array_key_exists($enrolment['roleid'], $userroles)) {
                 $errorparams = new \stdClass();
                 $errorparams->roleid = $enrolment['roleid'];
                 $errorparams->courseid = $enrolment['courseid'];
                 $errorparams->userid = $enrolment['userid'];
                 throw new \moodle_exception('wsusercannotassign', 'enrol_teameo', '', $errorparams);
             }
-
+    
             // Check teameo enrolment plugin instance is enabled/exist
-            // To avoid duplicate instances in concurrent requests, we lock the row using "FOR UPDATE" clause.
-            $instancesql = "SELECT * FROM {enrol} WHERE courseid=:courseid AND enrol='teameo' " .
-               "AND status=" . ENROL_INSTANCE_ENABLED . " FOR UPDATE";
+            // To avoid duplicate instances in concurrent requests, we lock the row using "FOR UPDATE" clause.            
+            $instancesql = "SELECT * FROM {enrol} WHERE courseid=:courseid AND enrol='teameo' AND status=". ENROL_INSTANCE_ENABLED ." FOR UPDATE";
             $instancesqlparams['courseid'] = $enrolment['courseid'];
-
-            $instance = $DB->get_record_sql($instancesql, $instancesqlparams);
-
+    
+            $instances = $DB->get_records_sql($instancesql, $instancesqlparams);
+            $instance = null;
+    
+            if(!empty($instances)) {
+                $roles = get_user_roles($context, $enrolment['userid'], false);
+                $roles = array_filter($roles, function ($role) use ($enrolment) {
+                    return $role->component === 'enrol_teameo' && $role->roleid == $enrolment['roleid'];
+                });
+    
+                if (!empty($roles)){
+                    // try to find the existing instance for the role
+                    foreach ($instances as $inst) {
+                        foreach ($roles as $role) {
+                            if ($role->itemid == $inst->id) {
+                                $instance = $inst;
+                                break;
+                            }
+                        }
+                    }
+                }
+    
+                if (empty($instance)) {
+                    // try to find instance with the same roleid
+                    foreach ($instances as $inst) {
+                        if($inst->roleid == $enrolment['roleid']) {
+                            $instance = $inst;
+                            break;
+                        }
+                    }
+                }
+            }
+    
             // No instance found. Check permissions and add automatically if we can.
             if (empty($instance)) {
-                if ($enrol->can_add_instance($enrolment['courseid'])) {
-                    $course = $DB->get_record('course', ['id' => $enrolment['courseid']]);
-                    $instanceid = $enrol->add_instance($course);
-                    $instance = $DB->get_record('enrol', ['id' => $instanceid]);
+                if ($enrol->can_add_instance($enrolment['courseid']) && 
+                    !$DB->record_exists('enrol', ['courseid' => $enrolment['courseid'], 'enrol' => 'teameo','roleid' => $enrolment['roleid']])) {
+                    $course = $DB->get_record('course', array('id' => $enrolment['courseid']));
+                    $instancefields = array('roleid' => $enrolment['roleid']);
+                    $instanceid = $enrol->add_instance($course, $instancefields);
+                    $instance = $DB->get_record('enrol', array('id' => $instanceid));
                 } else {
                     $errorparams = new \stdClass();
                     $errorparams->courseid = $enrolment['courseid'];
                     throw new \moodle_exception('wsnoinstance', 'enrol_teameo', '', $errorparams);
                 }
             }
-
+    
             // Finally proceed the enrolment.
             $enrolment['timestart'] = isset($enrolment['timestart']) ? $enrolment['timestart'] : 0;
             $enrolment['timeend'] = isset($enrolment['timeend']) ? $enrolment['timeend'] : 0;
             $enrolment['status'] = (isset($enrolment['suspend']) && !empty($enrolment['suspend'])) ?
                 ENROL_USER_SUSPENDED : ENROL_USER_ACTIVE;
-
+    
             $enrol->enrol_user(
                 $instance, $enrolment['userid'], $enrolment['roleid'],
                 $enrolment['timestart'], $enrolment['timeend'], $enrolment['status']
             );
-
+    
         }
-
+    
         $transaction->allow_commit();
     }
 

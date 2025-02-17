@@ -64,20 +64,52 @@ class enrol_teameo_plugin extends enrol_plugin {
      */
     public function can_add_instance($courseid) {
         global $DB;
-
+   
         $context = context_course::instance($courseid, MUST_EXIST);
-
+   
         if (!has_capability('moodle/course:enrolconfig', $context)) {
             return false;
         }
-
+   
         if (!has_capability('enrol/teameo:config', $context)) {
             return false;
         }
-
-        if ($DB->record_exists('enrol', ['courseid' => $courseid, 'enrol' => 'teameo'])) {
-            return false;
-        }
+   
+        // multiple instances supported - instance per role
+   
         return true;
+    }
+    
+    /**
+     * Returns localised name of enrol instance
+     *
+     * @param object $instance (null is accepted too)
+     * @return string
+     */
+    public function get_instance_name($instance) {
+        if (empty($instance->name)) {
+            $enrol = $this->get_name();
+            $name = get_string('pluginname', 'enrol_'.$enrol);
+            if($instance->roleid) {
+                // add role name to the instance name
+   
+                global $DB;
+                $rolename = '';
+                $role = $DB->get_record('role', array('id' => $instance->roleid));
+                if($role) {
+                    $rolename = role_get_name($role);
+                }
+                else{
+                    $rolename = 'Role #'. $instance->roleid;
+                }
+   
+                $name .= ' ('.$rolename.')';
+            }
+            
+            return $name;
+        } else {
+            $context = context_course::instance($instance->courseid);
+            return format_string($instance->name, true, array('context'=>$context));
+        }
     }
 }

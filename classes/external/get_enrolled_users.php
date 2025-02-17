@@ -90,17 +90,17 @@ class get_enrolled_users extends \external_api {
       *                               }
       * @return array An array of users
       */
-    public static function execute($courseid, $options = []) {
+      public static function execute($courseid, $options = []) {
         global $CFG, $USER, $DB;
-
+    
         require_once($CFG->dirroot . '/course/lib.php');
         require_once($CFG->dirroot . "/user/lib.php");
-
+    
         $params = self::validate_parameters(
             self::execute_parameters(),
-            ['courseid' => $courseid, 'options' => $options]
+            array('courseid' => $courseid, 'options' => $options)
         );
-
+    
         $withcapability = '';
         $groupid        = 0;
         $onlyactive     = false;
@@ -159,7 +159,7 @@ class get_enrolled_users extends \external_api {
                     break;
             }
         }
-
+    
         $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
         $coursecontext = \context_course::instance($courseid, IGNORE_MISSING);
         if ($courseid == SITEID) {
@@ -175,9 +175,9 @@ class get_enrolled_users extends \external_api {
             $exceptionparam->courseid = $params['courseid'];
             throw new \moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
         }
-
+    
         course_require_view_participants($context);
-
+    
         // To overwrite this parameter, you need role:review capability.
         if ($withcapability) {
             require_capability('moodle/role:review', $coursecontext);
@@ -190,70 +190,74 @@ class get_enrolled_users extends \external_api {
         if ($onlyactive || $onlysuspended) {
             require_capability('moodle/course:enrolreview', $coursecontext);
         }
-
-        list($enrolledsql, $enrolledparams) = get_enrolled_sql($coursecontext, $withcapability, $groupid, $onlyactive,
-        $onlysuspended);
-        $ctxselect = ', ' . \context_helper::get_preload_record_columns_sql('ctx');
-        $ctxjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
-        $enrolledparams['contextlevel'] = CONTEXT_USER;
-
-        $groupjoin = '';
-        if (empty($groupid) && groups_get_course_groupmode($course) == SEPARATEGROUPS &&
-                !has_capability('moodle/site:accessallgroups', $coursecontext)) {
-            // Filter by groups the user can view.
-            $usergroups = groups_get_user_groups($course->id);
-            if (!empty($usergroups['0'])) {
-                list($groupsql, $groupparams) = $DB->get_in_or_equal($usergroups['0'], SQL_PARAMS_NAMED);
-                $groupjoin = "JOIN {groups_members} gm ON (u.id = gm.userid AND gm.groupid $groupsql)";
-                $enrolledparams = array_merge($enrolledparams, $groupparams);
-            } else {
-                // User doesn't belong to any group, so he can't see any user. Return an empty array.
-                return [];
-            }
-        }
-
-        $instance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'teameo']);
-
-        $sql = "SELECT us.*, COALESCE(ul.timeaccess, 0) AS lastcourseaccess
-                  FROM {user} us
-                  JOIN (
-                      SELECT DISTINCT u.id $ctxselect
-                        FROM {user} u $ctxjoin $groupjoin
-                       WHERE u.id IN ($enrolledsql)
-                  ) q ON q.id = us.id
-                  JOIN {role_assignments} ra ON (ra.userid = us.id AND ra.component = 'enrol_teameo' AND ra.itemid = :enrolid)
-                  LEFT JOIN {user_lastaccess} ul ON (ul.userid = us.id AND ul.courseid = :courseid)
-                     ORDER BY $sortby $sortdirection";
-        $enrolledparams = array_merge($enrolledparams, $sortparams);
-        $enrolledparams['courseid'] = $courseid;
-        $enrolledparams['enrolid'] = $instance->id;
-
-        $enrolledusers = $DB->get_recordset_sql($sql, $enrolledparams, $limitfrom, $limitnumber);
+    
+        $instances = $DB->get_records('enrol', array('courseid' => $course->id, 'enrol' => 'teameo'));
         $users = [];
-        foreach ($enrolledusers as $user) {
-            \context_helper::preload_from_record($user);
-            if ($userdetails = user_get_user_details($user, $course, $userfields)) {
-                // Filter roles to get only the ones from the enrol_teameo component.
-                $roles = get_user_roles($context, $user->id, false);
-                $teameoroles = array_filter($roles, function($obj) {
-                    return $obj->component === 'enrol_teameo';
-                });
-
-                $userdetails['roles'] = [];
-                foreach ($teameoroles as $role) {
-                    $userdetails['roles'][] = array(
-                        'roleid'       => $role->roleid,
-                        'name'         => $role->name,
-                        'shortname'    => $role->shortname,
-                        'sortorder'    => $role->sortorder
-                    );
+        foreach ($instances as $instance) {
+            list($enrolledsql, $enrolledparams) = get_enrolled_sql($coursecontext, $withcapability, $groupid, $onlyactive,
+            $onlysuspended, $instance->id);
+            $ctxselect = ', ' . \context_helper::get_preload_record_columns_sql('ctx');
+            $ctxjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
+            $enrolledparams['contextlevel'] = CONTEXT_USER;
+    
+            $groupjoin = '';
+            if (empty($groupid) && groups_get_course_groupmode($course) == SEPARATEGROUPS &&
+                !has_capability('moodle/site:accessallgroups', $coursecontext)) {
+                // Filter by groups the user can view.
+                $usergroups = groups_get_user_groups($course->id);
+                if (!empty($usergroups['0'])) {
+                    list($groupsql, $groupparams) = $DB->get_in_or_equal($usergroups['0'], SQL_PARAMS_NAMED);
+                    $groupjoin = "JOIN {groups_members} gm ON (u.id = gm.userid AND gm.groupid $groupsql)";
+                    $enrolledparams = array_merge($enrolledparams, $groupparams);
+                } else {
+                    // User doesn't belong to any group, so he can't see any user. Return an empty array.
+                    return [];
                 }
-                
-                $users[] = $userdetails;
             }
+    
+            $sql = "SELECT us.*, COALESCE(ul.timeaccess, 0) AS lastcourseaccess
+                FROM {user} us
+                JOIN (
+                    SELECT DISTINCT u.id $ctxselect
+                    FROM {user} u $ctxjoin $groupjoin
+                    WHERE u.id IN ($enrolledsql)
+                ) q ON q.id = us.id
+                LEFT JOIN {user_lastaccess} ul ON (ul.userid = us.id AND ul.courseid = :courseid)
+                ORDER BY $sortby $sortdirection";
+    
+            $enrolledparams = array_merge($enrolledparams, $sortparams);
+            $enrolledparams['courseid'] = $courseid;
+    
+            $enrolledusers = $DB->get_recordset_sql($sql, $enrolledparams, $limitfrom, $limitnumber);
+    
+            foreach ($enrolledusers as $user) {
+                \context_helper::preload_from_record($user);
+                if ($userdetails = user_get_user_details($user, $course, $userfields)) {
+                    if (!empty($userdetails['roles'])) {
+                        // filter user roles to get only the roles for this teameo instance
+    
+                        $userroles = get_user_roles($context, $user->id, false);
+                        $teameoroles = array_filter($userroles, function ($role) use ($instance) {
+                            return $role->itemid == $instance->id;
+                        });
+    
+                        $userdetails['roles'] = [];
+                        foreach ($teameoroles as $role) {
+                            $userdetails['roles'][] = array(
+                                'roleid' => $role->roleid,
+                                'name' => $role->name,
+                                'shortname' => $role->shortname,
+                                'sortorder' => $role->sortorder
+                            );
+                        }
+                    }
+    
+                    $users[] = $userdetails;
+                }
+            }
+            $enrolledusers->close();
         }
-        $enrolledusers->close();
-
+    
         return $users;
     }
 
