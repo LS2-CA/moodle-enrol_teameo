@@ -101,7 +101,9 @@ $services = [
             'core_course_get_course_module',
             'core_enrol_get_enrolled_users',
             'core_group_update_groups',
-
+            'core_enrol_get_enrolled_users_with_capability',
+            'core_webservice_get_site_info',
+            
             // Course meta link functions.
             'enrol_meta_add_instances',
             'enrol_meta_delete_instances',
