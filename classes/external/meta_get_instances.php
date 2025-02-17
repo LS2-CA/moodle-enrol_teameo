@@ -40,7 +40,6 @@ require_once("{$CFG->libdir}/externallib.php");
  * @link      https://teameo.io
  */
 class meta_get_instances extends \external_api {
-
     /**
      * Returns description of method parameters.
      *
@@ -58,10 +57,9 @@ class meta_get_instances extends \external_api {
      * Get course meta enrolment instances.
      *
      * @param  int   $courseid The ID of the course.
-     * @param  array $options  Additional options (optional).
      * @return array An array of child ids of the course.
      */
-    public static function execute($courseid, $options = []) {
+    public static function execute($courseid) {
         global $CFG, $DB;
 
         require_once($CFG->dirroot . '/course/lib.php');

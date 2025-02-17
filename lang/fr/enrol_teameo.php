@@ -46,4 +46,3 @@ $string['privacy:metadata:core_user'] = 'S\'intègre au système utilisateur pri
 $string['privacy:metadata:external_system_user_creation'] = 'Ce plugin envoie les données utilisateur à un système externe pour la création d\'enregistrements utilisateur.';
 $string['privacy:metadata:external_system_user_creation:external_userid'] = 'L\'ID utilisateur dans le système externe.';
 $string['privacy:metadata:external_system_user_creation:external_email'] = 'L\'e-mail de l\'utilisateur dans le système externe.';
-

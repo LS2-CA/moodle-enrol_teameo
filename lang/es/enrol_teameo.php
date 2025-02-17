@@ -35,4 +35,3 @@ $string['wsusercannotassign'] = 'No tienes permiso para asignar este rol. ({$a->
 $string['teameo:config'] = 'Configurar instancias de inscripción de Teameo';
 $string['teameo:enrol'] = 'Inscribir usuarias';
 $string['teameo:unenrol'] = 'Dar de baja a los usuarios del curso';
-

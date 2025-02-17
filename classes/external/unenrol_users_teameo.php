@@ -40,7 +40,6 @@ require_once("{$CFG->libdir}/externallib.php");
  * @link      https://teameo.io
  */
 class unenrol_users_teameo extends \external_api {
-
     /**
      * Returns description of method parameters.
      *
@@ -75,51 +74,49 @@ class unenrol_users_teameo extends \external_api {
      */
     public static function execute($enrolments) {
         global $CFG, $DB;
-        $params = self::validate_parameters(self::execute_parameters(), array('enrolments' => $enrolments));
+        $params = self::validate_parameters(self::execute_parameters(), ['enrolments' => $enrolments]);
         require_once($CFG->libdir . '/enrollib.php');
         $transaction = $DB->start_delegated_transaction(); // Rollback all enrolment if an error occurs.
-    
+
         $enrol = enrol_get_plugin('teameo');
         if (empty($enrol)) {
             throw new \moodle_exception('teameopluginnotinstalled', 'enrol_teameo');
         }
-    
+
         foreach ($params['enrolments'] as $enrolment) {
             $context = \context_course::instance($enrolment['courseid']);
             self::validate_context($context);
-    
-            $instances = $DB->get_records('enrol', array('courseid' => $enrolment['courseid'], 'enrol' => 'teameo'));
-    
-            if($enrolment['roleid'])
-            {
-                // filter instances to only those with the roleid
-    
+
+            $instances = $DB->get_records('enrol', ['courseid' => $enrolment['courseid'], 'enrol' => 'teameo']);
+
+            if ($enrolment['roleid']) {
+                // Filter instances to only those with the roleid.
+
                 $roles = get_user_roles($context, $enrolment['userid'], false);
                 $roles = array_filter($roles, function ($role) use ($enrolment) {
                     return $role->component === 'enrol_teameo' && $role->roleid == $enrolment['roleid'];
                 });
-    
-                $roleinstanceids = array_map(function($role) {
+
+                $roleinstanceids = array_map(function ($role) {
                     return $role->itemid;
                 }, $roles);
-                
-                $instances = array_filter($instances, function($instance) use ($roleinstanceids) {
+
+                $instances = array_filter($instances, function ($instance) use ($roleinstanceids) {
                     return in_array($instance->id, $roleinstanceids);
                 });
             }
-    
+
             if (!empty($instances)) {
                 require_capability('enrol/teameo:unenrol', $context);
-            }
-            else {
+            } else {
                 throw new \moodle_exception('wsnoinstance', 'enrol_teameo', $enrolment);
             }
-    
-            $user = $DB->get_record('user', array('id' => $enrolment['userid']));
+
+            $user = $DB->get_record('user', ['id' => $enrolment['userid']]);
             if (!$user) {
                 throw new \invalid_parameter_exception('User id not exist: ' . $enrolment['userid']);
             }
-    
+
             foreach ($instances as $instance) {
                 $enrol->unenrol_user($instance, $enrolment['userid']);
             }
