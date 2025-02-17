@@ -1,4 +1,4 @@
-# Teameo Moodle Enrollment Plugin
+# Teameo & Classeo Moodle Enrollment Plugin
 
 Welcome to the official GitHub repository for the [Teameo & Classeo Moodle Enrollment Plugin](https://moodle.org/plugins/enrol_teameo), a robust solution designed to enhance the enrollment process in Moodle environments. This plugin facilitates seamless synchronization with your Student Information System (SIS), ensuring efficient, real-time enrollment management.
 
