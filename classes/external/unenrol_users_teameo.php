@@ -109,7 +109,7 @@ class unenrol_users_teameo extends \external_api {
             if (!empty($instances)) {
                 require_capability('enrol/teameo:unenrol', $context);
             } else {
-                throw new \moodle_exception('wsnoinstance', 'enrol_teameo', $enrolment);
+                throw new \moodle_exception('wsnoinstance', 'enrol_teameo', '', $enrolment);
             }
 
             $user = $DB->get_record('user', ['id' => $enrolment['userid']]);
