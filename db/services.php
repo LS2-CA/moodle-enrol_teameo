@@ -103,6 +103,7 @@ $services = [
             'core_group_update_groups',
             'core_enrol_get_enrolled_users_with_capability',
             'core_webservice_get_site_info',
+            'core_user_update_users',
 
             // Course meta link functions.
             'enrol_meta_add_instances',
