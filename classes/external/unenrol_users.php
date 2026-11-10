@@ -25,11 +25,11 @@
 
 namespace enrol_teameo\external;
 
-defined('MOODLE_INTERNAL') || die;
-
-global $CFG;
-
-require_once("{$CFG->libdir}/externallib.php");
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 /**
  * External function for unenrolling users from courses.
@@ -39,21 +39,21 @@ require_once("{$CFG->libdir}/externallib.php");
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @link      https://teameo.io
  */
-class unenrol_users extends \external_api {
+class unenrol_users extends external_api {
     /**
      * Returns description of method parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function execute_parameters() {
-        return new \external_function_parameters(
+        return new external_function_parameters(
             [
-                'enrolments' => new \external_multiple_structure(
-                    new \external_single_structure(
+                'enrolments' => new external_multiple_structure(
+                    new external_single_structure(
                         [
-                            'userid' => new \external_value(PARAM_INT, 'The user that is going to be unenrolled'),
-                            'courseid' => new \external_value(PARAM_INT, 'The course to unenrol the user from'),
-                            'roleid' => new \external_value(PARAM_INT, 'The user role', VALUE_OPTIONAL),
+                            'userid' => new external_value(PARAM_INT, 'The user that is going to be unenrolled'),
+                            'courseid' => new external_value(PARAM_INT, 'The course to unenrol the user from'),
+                            'roleid' => new external_value(PARAM_INT, 'The user role', VALUE_OPTIONAL),
                         ]
                     )
                 ),
@@ -70,7 +70,7 @@ class unenrol_users extends \external_api {
      * @throws \invalid_parameter_exception
      * @throws \moodle_exception
      * @throws \required_capability_exception
-     * @throws \restricted_context_exception
+     * @throws \core_external\restricted_context_exception
      */
     public static function execute($enrolments) {
         global $CFG, $DB;
@@ -90,7 +90,7 @@ class unenrol_users extends \external_api {
             self::validate_context($context);
 
             $instanceteameos = $DB->get_records('enrol', ['courseid' => $enrolment['courseid'], 'enrol' => 'teameo']);
-            if (!empty($instanceteameos) && $enrolment['roleid']) {
+            if (!empty($instanceteameos) && !empty($enrolment['roleid'])) {
                 // Filter instances to only those with the roleid.
 
                 $roles = get_user_roles($context, $enrolment['userid'], false);
@@ -111,7 +111,12 @@ class unenrol_users extends \external_api {
                 require_capability('enrol/teameo:unenrol', $context);
             }
 
-            $instancemanual = $DB->get_record('enrol', ['courseid' => $enrolment['courseid'], 'enrol' => 'manual']);
+            $instancemanual = $DB->get_record(
+                'enrol',
+                ['courseid' => $enrolment['courseid'], 'enrol' => 'manual'],
+                '*',
+                IGNORE_MULTIPLE
+            );
             if ($instancemanual) {
                 require_capability('enrol/manual:unenrol', $context);
             }

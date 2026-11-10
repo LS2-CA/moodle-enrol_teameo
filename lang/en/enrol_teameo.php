@@ -41,5 +41,6 @@ $string['teameo:unenrol'] = 'Unenrol users from the course';
 $string['teameopluginnotinstalled'] = 'The Teameo enrolments plugin has not been installed.';
 $string['wscannotenrol'] = 'Plugin instance cannot manually enrol a user in the course id = {$a->courseid}';
 $string['wscannotunenrol'] = 'Plugin instance cannot manually unenrol a user in the course id = {$a->courseid}';
+$string['wslocktimeout'] = 'Another enrolment request is still running for the course (id = {$a->courseid}). Please try again later.';
 $string['wsnoinstance'] = 'Teameo enrolments plugin instance doesn\'t exist and cannot be added for the course (id = {$a->courseid})';
 $string['wsusercannotassign'] = 'You don\'t have the permission to assign this role ({$a->roleid}) to this user ({$a->userid}) in this course ({$a->courseid}).';
