@@ -24,6 +24,11 @@ use enrol_teameo\external\unenrol_users;
 use enrol_teameo\external\unenrol_users_teameo;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(enrol_users::class)]
+#[CoversClass(get_enrolled_users::class)]
+#[CoversClass(meta_get_instances::class)]
+#[CoversClass(unenrol_users::class)]
+#[CoversClass(unenrol_users_teameo::class)]
 /**
  * Tests for the Teameo enrolment external functions.
  *
@@ -37,11 +42,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @covers    \enrol_teameo\external\unenrol_users
  * @covers    \enrol_teameo\external\unenrol_users_teameo
  */
-#[CoversClass(enrol_users::class)]
-#[CoversClass(get_enrolled_users::class)]
-#[CoversClass(meta_get_instances::class)]
-#[CoversClass(unenrol_users::class)]
-#[CoversClass(unenrol_users_teameo::class)]
 final class external_test extends \advanced_testcase {
     /** @var int The id of the student role. */
     private int $studentroleid;
@@ -97,7 +97,7 @@ final class external_test extends \advanced_testcase {
             ['roleid' => $this->studentroleid, 'userid' => $student->id, 'courseid' => $course->id],
             ['roleid' => $this->teacherroleid, 'userid' => $teacher->id, 'courseid' => $course->id],
         ]);
-        $this->assertNull(external_api::clean_returnvalue(enrol_users::execute_returns(), $result));
+        $this->assertNull($result);
 
         $instances = $this->get_teameo_instances($course->id);
         $this->assertCount(2, $instances);
@@ -201,7 +201,7 @@ final class external_test extends \advanced_testcase {
         $result = unenrol_users_teameo::execute([
             ['userid' => $user->id, 'courseid' => $course->id, 'roleid' => $this->teacherroleid],
         ]);
-        $this->assertNull(external_api::clean_returnvalue(unenrol_users_teameo::execute_returns(), $result));
+        $this->assertNull($result);
 
         $roles = get_user_roles($context, $user->id, false);
         $this->assertCount(1, $roles);
@@ -263,7 +263,7 @@ final class external_test extends \advanced_testcase {
             ['userid' => $teameouser->id, 'courseid' => $course->id],
             ['userid' => $manualuser->id, 'courseid' => $course->id],
         ]);
-        $this->assertNull(external_api::clean_returnvalue(unenrol_users::execute_returns(), $result));
+        $this->assertNull($result);
 
         $this->assertFalse(is_enrolled($context, $teameouser->id));
         $this->assertFalse(is_enrolled($context, $manualuser->id));

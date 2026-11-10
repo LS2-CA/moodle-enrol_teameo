@@ -19,6 +19,7 @@ namespace enrol_teameo\privacy;
 use core_privacy\local\metadata\collection;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(provider::class)]
 /**
  * Tests for the Teameo enrolment privacy provider.
  *
@@ -28,7 +29,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \enrol_teameo\privacy\provider
  */
-#[CoversClass(provider::class)]
 final class provider_test extends \advanced_testcase {
     /**
      * The provider is found by the privacy subsystem and every string it refers to exists.

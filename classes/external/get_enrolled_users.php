@@ -94,7 +94,7 @@ class get_enrolled_users extends external_api {
      * @return array An array of users
      */
     public static function execute($courseid, $options = []) {
-        global $CFG, $USER, $DB;
+        global $CFG, $DB;
 
         require_once($CFG->dirroot . '/course/lib.php');
         require_once($CFG->dirroot . "/user/lib.php");

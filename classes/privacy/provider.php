@@ -35,7 +35,7 @@ use core_privacy\local\metadata\collection;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @link      https://teameo.io
  */
-class provider implements \core_privacy\local\request\data_provider, \core_privacy\local\metadata\provider {
+class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\data_provider {
     /**
      * Returns meta data about this system.
      *
