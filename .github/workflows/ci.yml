@@ -31,8 +31,8 @@ jobs:
           - 3306:3306
         options: --health-cmd="mariadb-admin ping" --health-interval 10s --health-timeout 5s --health-retries 3
 
-    # Every Moodle version still supported upstream, with its lowest and highest supported PHP version,
-    # plus the development branch as an early warning that is allowed to fail.
+    # Every Moodle version still supported upstream, plus 5.0 (out of support but still widely installed),
+    # each with its lowest and highest supported PHP version, and the development branch as an early warning that is allowed to fail.
     strategy:
       fail-fast: false
       matrix:
@@ -42,6 +42,12 @@ jobs:
             database: pgsql
           - moodle-branch: 'MOODLE_405_STABLE'
             php: '8.3'
+            database: mariadb
+          - moodle-branch: 'MOODLE_500_STABLE'
+            php: '8.2'
+            database: pgsql
+          - moodle-branch: 'MOODLE_500_STABLE'
+            php: '8.4'
             database: mariadb
           - moodle-branch: 'MOODLE_501_STABLE'
             php: '8.2'
