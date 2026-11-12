@@ -23,7 +23,6 @@
  * @link      https://teameo.io
  */
 
-
 /**
  * Teameo enrolment plugin class implementation.
  *
@@ -63,8 +62,6 @@ class enrol_teameo_plugin extends enrol_plugin {
      * @return boolean
      */
     public function can_add_instance($courseid) {
-        global $DB;
-
         $context = context_course::instance($courseid, MUST_EXIST);
 
         if (!has_capability('moodle/course:enrolconfig', $context)) {
@@ -87,19 +84,19 @@ class enrol_teameo_plugin extends enrol_plugin {
      * @return string
      */
     public function get_instance_name($instance) {
+        global $DB;
+
         if (empty($instance->name)) {
             $enrol = $this->get_name();
             $name = get_string('pluginname', 'enrol_' . $enrol);
             if ($instance->roleid) {
                 // Add role name to the instance name.
-
-                global $DB;
                 $rolename = '';
                 $role = $DB->get_record('role', ['id' => $instance->roleid]);
                 if ($role) {
                     $rolename = role_get_name($role);
                 } else {
-                    $rolename = 'Role #' . $instance->roleid;
+                    $rolename = '#' . $instance->roleid;
                 }
 
                 $name .= ' (' . $rolename . ')';

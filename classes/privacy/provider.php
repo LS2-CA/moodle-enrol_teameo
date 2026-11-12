@@ -23,18 +23,19 @@
  * @link      https://teameo.io
  */
 
+namespace enrol_teameo\privacy;
+
 use core_privacy\local\metadata\collection;
-use core_privacy\local\metadata\external_location;
 
 /**
- * Data provider for enrol_Teameo.
+ * Privacy provider for enrol_teameo.
  *
  * @package   enrol_teameo
  * @copyright 2024 Teameo.io
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @link      https://teameo.io
  */
-class provider implements \core_privacy\local\request\data_provider, \core_privacy\local\metadata\provider {
+class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\data_provider {
     /**
      * Returns meta data about this system.
      *
@@ -43,20 +44,21 @@ class provider implements \core_privacy\local\request\data_provider, \core_priva
      */
     public static function get_metadata(collection $collection): collection {
 
-        // Details about reading user profiles.
-        $collection->add_data_source('user_profile_data', [
+        // User profile data is read from the core user subsystem.
+        $collection->add_subsystem_link('core_user', [], 'privacy:metadata:core_user');
+
+        // User profile data sent to Teameo through the web services of this plugin.
+        $collection->add_external_location_link('user_profile_data', [
             'userid' => 'privacy:metadata:user_profile_data:userid',
             'email' => 'privacy:metadata:user_profile_data:email',
             'firstname' => 'privacy:metadata:user_profile_data:firstname',
             'lastname' => 'privacy:metadata:user_profile_data:lastname',
-            // Include other relevant user profile fields your plugin accesses.
-        ])->set_subsystem_link('core_user', 'privacy:metadata:core_user');
+        ], 'privacy:metadata:user_profile_data');
 
         // External system where user records are created.
         $collection->add_external_location_link('external_system_user_creation', [
             'external_userid' => 'privacy:metadata:external_system_user_creation:external_userid',
             'external_email' => 'privacy:metadata:external_system_user_creation:external_email',
-            // Include additional fields as per the data sent to the external system.
         ], 'privacy:metadata:external_system_user_creation');
 
         return $collection;

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Teameo enrolment plugin version specification.
+ * Teameo enrolment plugin capabilities.
  *
  * @package   enrol_teameo
  * @copyright 2024 Teameo.io

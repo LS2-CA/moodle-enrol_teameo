@@ -30,7 +30,7 @@ $string['privacy:metadata:core_user'] = 'S\'intègre au système utilisateur pri
 $string['privacy:metadata:external_system_user_creation'] = 'Ce plugin envoie les données utilisateur à un système externe pour la création d\'enregistrements utilisateur.';
 $string['privacy:metadata:external_system_user_creation:external_email'] = 'L\'e-mail de l\'utilisateur dans le système externe.';
 $string['privacy:metadata:external_system_user_creation:external_userid'] = 'L\'ID utilisateur dans le système externe.';
-$string['privacy:metadata:user_profile_data'] = 'Ce plugin lit les profils utilisateur de Moodle.';
+$string['privacy:metadata:user_profile_data'] = 'Données du profil utilisateur envoyées à Teameo par les services web de ce plugin.';
 $string['privacy:metadata:user_profile_data:email'] = 'L\'email de l\'utilisateur en cours de lecture.';
 $string['privacy:metadata:user_profile_data:firstname'] = 'Le prénom de l\'utilisateur.';
 $string['privacy:metadata:user_profile_data:lastname'] = 'Le nom de famille de l\'utilisateur.';
@@ -41,5 +41,6 @@ $string['teameo:unenrol'] = 'Désinscrire des utilisateurs du cours';
 $string['teameopluginnotinstalled'] = 'Le plugin d\'inscriptions Teameo n\'a pas été installé.';
 $string['wscannotenrol'] = 'L\'instance de plug-in ne peut pas inscrire manuellement un utilisateur dans l\'id de cours = {$a->courseid}';
 $string['wscannotunenrol'] = 'L\'instance de plug-in ne peut pas désinscrire manuellement un utilisateur dans l\'id de cours = {$a->courseid}';
+$string['wslocktimeout'] = 'Une autre requête d\'inscription est toujours en cours pour le cours (id = {$a->courseid}). Veuillez réessayer plus tard.';
 $string['wsnoinstance'] = 'L\'instance du plug-in d\'inscriptions Teameo n\'existe pas et ne peut pas être ajoutée pour le cours (id = {$a->courseid})';
 $string['wsusercannotassign'] = 'Vous n\'êtes pas autorisé à attribuer ce rôle ({$a->roleid}) à cet utilisateur ({$a->userid}) dans ce cours ({$a->courseid}).';

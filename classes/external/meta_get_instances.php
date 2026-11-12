@@ -25,11 +25,10 @@
 
 namespace enrol_teameo\external;
 
-defined('MOODLE_INTERNAL') || die;
-
-global $CFG;
-
-require_once("{$CFG->libdir}/externallib.php");
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_value;
 
 /**
  * External function to get course meta enrolment instances
@@ -39,16 +38,16 @@ require_once("{$CFG->libdir}/externallib.php");
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @link      https://teameo.io
  */
-class meta_get_instances extends \external_api {
+class meta_get_instances extends external_api {
     /**
      * Returns description of method parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function execute_parameters() {
-        return new \external_function_parameters(
+        return new external_function_parameters(
             [
-                'courseid' => new \external_value(PARAM_INT, 'ID of the course with meta enrolment.'),
+                'courseid' => new external_value(PARAM_INT, 'ID of the course with meta enrolment.'),
             ]
         );
     }
@@ -69,10 +68,10 @@ class meta_get_instances extends \external_api {
             ['courseid' => $courseid]
         );
 
-        $course = $DB->get_record('course', ['id' => $params['courseid']], '*', MUST_EXIST);
+        $DB->get_record('course', ['id' => $params['courseid']], 'id', MUST_EXIST);
 
         // Ensure the current user is allowed to access metacourse.
-        $coursecontext = \context_course::instance($courseid, IGNORE_MISSING);
+        $coursecontext = \context_course::instance($params['courseid']);
         try {
             self::validate_context($coursecontext);
             require_all_capabilities(['moodle/course:enrolconfig', 'enrol/meta:config'], $coursecontext);
@@ -84,7 +83,7 @@ class meta_get_instances extends \external_api {
         $enrolinstances = enrol_get_instances($params['courseid'], false);
         foreach ($enrolinstances as $enrolinstance) {
             if ($enrolinstance->enrol == 'meta') {
-                $result[] = $enrolinstance->customint1;
+                $result[] = (int)$enrolinstance->customint1;
             }
         }
         return $result;
@@ -93,11 +92,11 @@ class meta_get_instances extends \external_api {
     /**
      * Returns description of method result value.
      *
-     * @return \external_multiple_structure
+     * @return external_multiple_structure
      */
     public static function execute_returns() {
-        return new \external_multiple_structure(
-            new \external_value(PARAM_INT, 'IDs of the courses where meta enrolment is linked to.')
+        return new external_multiple_structure(
+            new external_value(PARAM_INT, 'IDs of the courses where meta enrolment is linked to.')
         );
     }
 }
