@@ -26,6 +26,15 @@
 $string['pluginname'] = 'Inscripciones Teameo';
 $string['pluginname_desc'] = 'El complemento de inscripción de Teameo permite que los usuarios se inscriban a través de la solución de terceros, Teameo, llamando a los servicios web correspondientes.';
 $string['privacy:metadata'] = 'El complemento de registro de Teameo no almacena ningún dato personal.';
+$string['privacy:metadata:core_user'] = 'Se integra con el sistema de usuarios principal para leer los perfiles de usuario.';
+$string['privacy:metadata:external_system_user_creation'] = 'Este complemento envía datos de usuario a un sistema externo para la creación de registros de usuario.';
+$string['privacy:metadata:external_system_user_creation:external_email'] = 'El correo electrónico del usuario en el sistema externo.';
+$string['privacy:metadata:external_system_user_creation:external_userid'] = 'El ID del usuario en el sistema externo.';
+$string['privacy:metadata:user_profile_data'] = 'Datos del perfil de usuario enviados a Teameo a través de los servicios web de este complemento.';
+$string['privacy:metadata:user_profile_data:email'] = 'El correo electrónico del usuario.';
+$string['privacy:metadata:user_profile_data:firstname'] = 'El nombre del usuario.';
+$string['privacy:metadata:user_profile_data:lastname'] = 'El apellido del usuario.';
+$string['privacy:metadata:user_profile_data:userid'] = 'El ID del usuario.';
 $string['teameo:config'] = 'Configurar instancias de inscripción de Teameo';
 $string['teameo:enrol'] = 'Inscribir usuarias';
 $string['teameo:unenrol'] = 'Dar de baja a los usuarios del curso';

@@ -84,13 +84,13 @@ class enrol_teameo_plugin extends enrol_plugin {
      * @return string
      */
     public function get_instance_name($instance) {
+        global $DB;
+
         if (empty($instance->name)) {
             $enrol = $this->get_name();
             $name = get_string('pluginname', 'enrol_' . $enrol);
             if ($instance->roleid) {
                 // Add role name to the instance name.
-
-                global $DB;
                 $rolename = '';
                 $role = $DB->get_record('role', ['id' => $instance->roleid]);
                 if ($role) {
