@@ -90,7 +90,8 @@ class unenrol_users extends external_api {
             self::validate_context($context);
 
             $instanceteameos = $DB->get_records('enrol', ['courseid' => $enrolment['courseid'], 'enrol' => 'teameo']);
-            if (!empty($instanceteameos) && !empty($enrolment['roleid'])) {
+            $hasteameoinstance = !empty($instanceteameos);
+            if ($hasteameoinstance && !empty($enrolment['roleid'])) {
                 // Filter instances to only those with the roleid.
 
                 $roles = get_user_roles($context, $enrolment['userid'], false);
@@ -121,7 +122,7 @@ class unenrol_users extends external_api {
                 require_capability('enrol/manual:unenrol', $context);
             }
 
-            if (empty($instanceteameos) && !$instancemanual) {
+            if (!$hasteameoinstance && !$instancemanual) {
                 throw new \moodle_exception('wsnoinstance', 'enrol_teameo', '', (object)['courseid' => $enrolment['courseid']]);
             }
             $user = $DB->get_record('user', ['id' => $enrolment['userid']]);

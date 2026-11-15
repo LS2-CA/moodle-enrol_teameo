@@ -173,12 +173,19 @@ class enrol_users extends external_api {
 
                 // No instance found. Check permissions and add automatically if we can.
                 if (empty($instance)) {
+                    // An instance for the role exists, so it is disabled: do not add another one.
                     if (
-                        $enrol->can_add_instance($enrolment['courseid']) &&
-                        !$DB->record_exists('enrol', [
+                        $DB->record_exists('enrol', [
                             'courseid' => $enrolment['courseid'], 'enrol' => 'teameo', 'roleid' => $enrolment['roleid'],
                         ])
                     ) {
+                        $errorparams = new \stdClass();
+                        $errorparams->courseid = $enrolment['courseid'];
+                        $errorparams->roleid = $enrolment['roleid'];
+                        throw new \moodle_exception('wsinstancedisabled', 'enrol_teameo', '', $errorparams);
+                    }
+
+                    if ($enrol->can_add_instance($enrolment['courseid'])) {
                         $course = $DB->get_record('course', ['id' => $enrolment['courseid']], '*', MUST_EXIST);
                         $instancefields = ['roleid' => $enrolment['roleid']];
                         $instanceid = $enrol->add_instance($course, $instancefields);

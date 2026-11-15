@@ -41,6 +41,7 @@ $string['teameo:unenrol'] = 'Dar de baja a los usuarios del curso';
 $string['teameopluginnotinstalled'] = 'El complemento de registro de Teameo no se ha instalado.';
 $string['wscannotenrol'] = 'La instancia del complemento no puede inscribir manualmente a un usuario en el course id = {$a->courseid}';
 $string['wscannotunenrol'] = 'La instancia del complemento no puede anular manualmente la inscripción de un usuario en el course id = {$a->courseid}';
+$string['wsinstancedisabled'] = 'La instancia de inscripción Teameo para el rol (id = {$a->roleid}) está desactivada en el curso (id = {$a->courseid}).';
 $string['wslocktimeout'] = 'Otra solicitud de inscripción sigue en curso para el curso (id = {$a->courseid}). Vuelva a intentarlo más tarde.';
-$string['wsnoinstance'] = 'La instancia del complemento de inscripción de Teameo no existe y no se puede agregar para el curso (id = {$a->courseid})';
+$string['wsnoinstance'] = 'No se encontró ninguna instancia de inscripción Teameo utilizable para el curso (id = {$a->courseid}).';
 $string['wsusercannotassign'] = 'No tienes permiso para asignar este rol. ({$a->roleid}) A esta usuaria ({$a->userid}) en este curso ({$a->courseid}).';

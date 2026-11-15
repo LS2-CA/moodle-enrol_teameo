@@ -183,6 +183,35 @@ final class external_test extends \advanced_testcase {
         }
     }
 
+	/**
+	 * Enrolling with the role of a disabled instance fails, and no new instance is created.
+	 */
+	public function test_enrol_users_disabled_instance(): void {
+		global $DB;
+
+		$generator = $this->getDataGenerator();
+		$course = $generator->create_course();
+		$student = $generator->create_user();
+		$user = $generator->create_user();
+
+		enrol_users::execute([
+			['roleid' => $this->studentroleid, 'userid' => $student->id, 'courseid' => $course->id],
+		]);
+		$instance = $this->get_teameo_instances($course->id)[$this->studentroleid];
+		$DB->set_field('enrol', 'status', ENROL_INSTANCE_DISABLED, ['id' => $instance->id]);
+
+		try {
+			enrol_users::execute([
+				['roleid' => $this->studentroleid, 'userid' => $user->id, 'courseid' => $course->id],
+			]);
+			$this->fail('A moodle_exception was expected.');
+		} catch (\moodle_exception $e) {
+			$this->assertEquals('wsinstancedisabled', $e->errorcode);
+			$this->assertCount(1, $this->get_teameo_instances($course->id));
+			$this->assertFalse(is_enrolled(\context_course::instance($course->id), $user->id));
+		}
+	}
+
     /**
      * Unenrolling with a role only removes the enrolment of the instance of that role.
      */
@@ -240,6 +269,29 @@ final class external_test extends \advanced_testcase {
         $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage(get_string('wsnoinstance', 'enrol_teameo', ['courseid' => $course->id]));
         unenrol_users_teameo::execute([['userid' => $user->id, 'courseid' => $course->id]]);
+    }
+
+    /**
+     * Unenrolling a user who does not have the role through Teameo does nothing and does not fail.
+     */
+    public function test_unenrol_users_teameo_not_enrolled_is_noop(): void {
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $enrolled = $generator->create_user();
+        $notenrolled = $generator->create_user();
+        $context = \context_course::instance($course->id);
+
+        enrol_users::execute([
+            ['roleid' => $this->studentroleid, 'userid' => $enrolled->id, 'courseid' => $course->id],
+        ]);
+
+        unenrol_users_teameo::execute([
+            ['userid' => $notenrolled->id, 'courseid' => $course->id, 'roleid' => $this->studentroleid],
+            ['userid' => $enrolled->id, 'courseid' => $course->id, 'roleid' => $this->teacherroleid],
+        ]);
+
+        $this->assertFalse(is_enrolled($context, $notenrolled->id));
+        $this->assertTrue(is_enrolled($context, $enrolled->id));
     }
 
     /**

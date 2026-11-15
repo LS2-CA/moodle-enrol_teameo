@@ -41,6 +41,7 @@ $string['teameo:unenrol'] = 'Désinscrire des utilisateurs du cours';
 $string['teameopluginnotinstalled'] = 'Le plugin d\'inscriptions Teameo n\'a pas été installé.';
 $string['wscannotenrol'] = 'L\'instance de plug-in ne peut pas inscrire manuellement un utilisateur dans l\'id de cours = {$a->courseid}';
 $string['wscannotunenrol'] = 'L\'instance de plug-in ne peut pas désinscrire manuellement un utilisateur dans l\'id de cours = {$a->courseid}';
+$string['wsinstancedisabled'] = 'L\'instance d\'inscription Teameo pour le rôle (id = {$a->roleid}) est désactivée dans le cours (id = {$a->courseid}).';
 $string['wslocktimeout'] = 'Une autre requête d\'inscription est toujours en cours pour le cours (id = {$a->courseid}). Veuillez réessayer plus tard.';
-$string['wsnoinstance'] = 'L\'instance du plug-in d\'inscriptions Teameo n\'existe pas et ne peut pas être ajoutée pour le cours (id = {$a->courseid})';
+$string['wsnoinstance'] = 'Aucune instance d\'inscription Teameo utilisable n\'a été trouvée pour le cours (id = {$a->courseid}).';
 $string['wsusercannotassign'] = 'Vous n\'êtes pas autorisé à attribuer ce rôle ({$a->roleid}) à cet utilisateur ({$a->userid}) dans ce cours ({$a->courseid}).';

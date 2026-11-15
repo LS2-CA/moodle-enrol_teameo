@@ -88,6 +88,10 @@ class unenrol_users_teameo extends external_api {
             self::validate_context($context);
 
             $instances = $DB->get_records('enrol', ['courseid' => $enrolment['courseid'], 'enrol' => 'teameo']);
+            if (empty($instances)) {
+                throw new \moodle_exception('wsnoinstance', 'enrol_teameo', '', (object)['courseid' => $enrolment['courseid']]);
+            }
+            require_capability('enrol/teameo:unenrol', $context);
 
             if (!empty($enrolment['roleid'])) {
                 // Filter instances to only those with the roleid.
@@ -104,12 +108,6 @@ class unenrol_users_teameo extends external_api {
                 $instances = array_filter($instances, function ($instance) use ($roleinstanceids) {
                     return in_array($instance->id, $roleinstanceids);
                 });
-            }
-
-            if (!empty($instances)) {
-                require_capability('enrol/teameo:unenrol', $context);
-            } else {
-                throw new \moodle_exception('wsnoinstance', 'enrol_teameo', '', (object)['courseid' => $enrolment['courseid']]);
             }
 
             $user = $DB->get_record('user', ['id' => $enrolment['userid']]);
