@@ -183,34 +183,34 @@ final class external_test extends \advanced_testcase {
         }
     }
 
-	/**
-	 * Enrolling with the role of a disabled instance fails, and no new instance is created.
-	 */
-	public function test_enrol_users_disabled_instance(): void {
-		global $DB;
+    /**
+     * Enrolling with the role of a disabled instance fails, and no new instance is created.
+     */
+    public function test_enrol_users_disabled_instance(): void {
+        global $DB;
 
-		$generator = $this->getDataGenerator();
-		$course = $generator->create_course();
-		$student = $generator->create_user();
-		$user = $generator->create_user();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $student = $generator->create_user();
+        $user = $generator->create_user();
 
-		enrol_users::execute([
-			['roleid' => $this->studentroleid, 'userid' => $student->id, 'courseid' => $course->id],
-		]);
-		$instance = $this->get_teameo_instances($course->id)[$this->studentroleid];
-		$DB->set_field('enrol', 'status', ENROL_INSTANCE_DISABLED, ['id' => $instance->id]);
+        enrol_users::execute([
+            ['roleid' => $this->studentroleid, 'userid' => $student->id, 'courseid' => $course->id],
+        ]);
+        $instance = $this->get_teameo_instances($course->id)[$this->studentroleid];
+        $DB->set_field('enrol', 'status', ENROL_INSTANCE_DISABLED, ['id' => $instance->id]);
 
-		try {
-			enrol_users::execute([
-				['roleid' => $this->studentroleid, 'userid' => $user->id, 'courseid' => $course->id],
-			]);
-			$this->fail('A moodle_exception was expected.');
-		} catch (\moodle_exception $e) {
-			$this->assertEquals('wsinstancedisabled', $e->errorcode);
-			$this->assertCount(1, $this->get_teameo_instances($course->id));
-			$this->assertFalse(is_enrolled(\context_course::instance($course->id), $user->id));
-		}
-	}
+        try {
+            enrol_users::execute([
+                ['roleid' => $this->studentroleid, 'userid' => $user->id, 'courseid' => $course->id],
+            ]);
+            $this->fail('A moodle_exception was expected.');
+        } catch (\moodle_exception $e) {
+            $this->assertEquals('wsinstancedisabled', $e->errorcode);
+            $this->assertCount(1, $this->get_teameo_instances($course->id));
+            $this->assertFalse(is_enrolled(\context_course::instance($course->id), $user->id));
+        }
+    }
 
     /**
      * Unenrolling with a role only removes the enrolment of the instance of that role.
