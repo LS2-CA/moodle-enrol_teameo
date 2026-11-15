@@ -25,11 +25,12 @@
 
 namespace enrol_teameo\external;
 
-defined('MOODLE_INTERNAL') || die;
-
-global $CFG;
-
-require_once("{$CFG->libdir}/externallib.php");
+use core_external\external_api;
+use core_external\external_format_value;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 /**
  * External function for enrolling users to courses.
@@ -39,21 +40,21 @@ require_once("{$CFG->libdir}/externallib.php");
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @link      https://teameo.io
  */
-class get_enrolled_users extends \external_api {
+class get_enrolled_users extends external_api {
     /**
      * Returns description of method parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function execute_parameters() {
-        return new \external_function_parameters(
+        return new external_function_parameters(
             [
-                'courseid' => new \external_value(PARAM_INT, 'course id'),
-                'options'  => new \external_multiple_structure(
-                    new \external_single_structure(
+                'courseid' => new external_value(PARAM_INT, 'course id'),
+                'options'  => new external_multiple_structure(
+                    new external_single_structure(
                         [
-                            'name'  => new \external_value(PARAM_ALPHANUMEXT, 'option name'),
-                            'value' => new \external_value(PARAM_RAW, 'option value'),
+                            'name'  => new external_value(PARAM_ALPHANUMEXT, 'option name'),
+                            'value' => new external_value(PARAM_RAW, 'option value'),
                         ]
                     ),
                     'Option names:
@@ -82,18 +83,18 @@ class get_enrolled_users extends \external_api {
         );
     }
 
-     /**
-      * Get course participants details
-      *
-      * @param int $courseid  course id
-      * @param array $options options {
-      *                                'name' => option name
-      *                                'value' => option value
-      *                               }
-      * @return array An array of users
-      */
+    /**
+     * Get course participants details
+     *
+     * @param int $courseid  course id
+     * @param array $options options {
+     *                                'name' => option name
+     *                                'value' => option value
+     *                               }
+     * @return array An array of users
+     */
     public static function execute($courseid, $options = []) {
-        global $CFG, $USER, $DB;
+        global $CFG, $DB;
 
         require_once($CFG->dirroot . '/course/lib.php');
         require_once($CFG->dirroot . "/user/lib.php");
@@ -113,7 +114,8 @@ class get_enrolled_users extends \external_api {
         $sortby = 'us.id';
         $sortparams = [];
         $sortdirection = 'ASC';
-        foreach ($options as $option) {
+        $courseid = $params['courseid'];
+        foreach ($params['options'] as $option) {
             switch ($option['name']) {
                 case 'withcapability':
                     $withcapability = $option['value'];
@@ -163,7 +165,7 @@ class get_enrolled_users extends \external_api {
         }
 
         $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
-        $coursecontext = \context_course::instance($courseid, IGNORE_MISSING);
+        $coursecontext = \context_course::instance($courseid);
         if ($courseid == SITEID) {
             $context = \context_system::instance();
         } else {
@@ -174,7 +176,7 @@ class get_enrolled_users extends \external_api {
         } catch (\Exception $e) {
             $exceptionparam = new \stdClass();
             $exceptionparam->message = $e->getMessage();
-            $exceptionparam->courseid = $params['courseid'];
+            $exceptionparam->courseid = $courseid;
             throw new \moodle_exception('errorcoursecontextnotvalid', 'webservice', '', $exceptionparam);
         }
 
@@ -193,7 +195,27 @@ class get_enrolled_users extends \external_api {
             require_capability('moodle/course:enrolreview', $coursecontext);
         }
 
-        $instances = $DB->get_records('enrol', ['courseid' => $course->id, 'enrol' => 'teameo']);
+        $groupjoin = '';
+        $groupparams = [];
+        if (
+            empty($groupid) && groups_get_course_groupmode($course) == SEPARATEGROUPS &&
+            !has_capability('moodle/site:accessallgroups', $coursecontext)
+        ) {
+            // Filter by groups the user can view.
+            $usergroups = groups_get_user_groups($course->id);
+            if (!empty($usergroups['0'])) {
+                [$groupsql, $groupparams] = $DB->get_in_or_equal($usergroups['0'], SQL_PARAMS_NAMED, 'tgrp');
+                $groupjoin = "JOIN {groups_members} gm ON (u.id = gm.userid AND gm.groupid $groupsql)";
+            } else {
+                // User doesn't belong to any group, so he can't see any user. Return an empty array.
+                return [];
+            }
+        }
+
+        // The function building the user details moved to \core\user in Moodle 5.3.
+        $newuserapi = method_exists(\core\user::class, 'get_user_details');
+
+        $instances = $DB->get_records('enrol', ['courseid' => $course->id, 'enrol' => 'teameo'], 'sortorder, id');
         $users = [];
         foreach ($instances as $instance) {
             [$enrolledsql, $enrolledparams] = get_enrolled_sql(
@@ -208,22 +230,7 @@ class get_enrolled_users extends \external_api {
             $ctxjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
             $enrolledparams['contextlevel'] = CONTEXT_USER;
 
-            $groupjoin = '';
-            if (
-                empty($groupid) && groups_get_course_groupmode($course) == SEPARATEGROUPS &&
-                !has_capability('moodle/site:accessallgroups', $coursecontext)
-            ) {
-                // Filter by groups the user can view.
-                $usergroups = groups_get_user_groups($course->id);
-                if (!empty($usergroups['0'])) {
-                    [$groupsql, $groupparams] = $DB->get_in_or_equal($usergroups['0'], SQL_PARAMS_NAMED);
-                    $groupjoin = "JOIN {groups_members} gm ON (u.id = gm.userid AND gm.groupid $groupsql)";
-                    $enrolledparams = array_merge($enrolledparams, $groupparams);
-                } else {
-                    // User doesn't belong to any group, so he can't see any user. Return an empty array.
-                    return [];
-                }
-            }
+            $enrolledparams = array_merge($enrolledparams, $groupparams);
 
             $sql = "SELECT us.*, COALESCE(ul.timeaccess, 0) AS lastcourseaccess
                 FROM {user} us
@@ -242,13 +249,16 @@ class get_enrolled_users extends \external_api {
 
             foreach ($enrolledusers as $user) {
                 \context_helper::preload_from_record($user);
-                if ($userdetails = user_get_user_details($user, $course, $userfields)) {
+                $userdetails = $newuserapi
+                    ? \core\user::get_user_details($user, $course, $userfields)
+                    : user_get_user_details($user, $course, $userfields);
+                if ($userdetails) {
                     if (!empty($userdetails['roles'])) {
                         // Filter user roles to get only the roles for this teameo instance.
 
                         $userroles = get_user_roles($context, $user->id, false);
                         $teameoroles = array_filter($userroles, function ($role) use ($instance) {
-                            return $role->itemid == $instance->id;
+                            return $role->component === 'enrol_teameo' && $role->itemid == $instance->id;
                         });
 
                         $userdetails['roles'] = [];
@@ -274,64 +284,64 @@ class get_enrolled_users extends \external_api {
     /**
      * Returns description of method result value.
      *
-     * @return \external_multiple_structure
+     * @return external_multiple_structure
      */
     public static function execute_returns() {
-        return new \external_multiple_structure(
-            new \external_single_structure(
+        return new external_multiple_structure(
+            new external_single_structure(
                 [
-                    'id'    => new \external_value(PARAM_INT, 'ID of the user'),
-                    'username'    => new \external_value(
+                    'id'    => new external_value(PARAM_INT, 'ID of the user'),
+                    'username'    => new external_value(
                         PARAM_RAW,
                         'Username policy is defined in Moodle security config',
                         VALUE_OPTIONAL
                     ),
-                    'firstname'   => new \external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
-                    'lastname'    => new \external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
-                    'fullname'    => new \external_value(PARAM_NOTAGS, 'The fullname of the user'),
-                    'email'       => new \external_value(
+                    'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
+                    'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
+                    'fullname'    => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
+                    'email'       => new external_value(
                         PARAM_TEXT,
                         'An email address - allow email as root@localhost',
                         VALUE_OPTIONAL
                     ),
-                    'address'     => new \external_value(PARAM_TEXT, 'Postal address', VALUE_OPTIONAL),
-                    'phone1'      => new \external_value(PARAM_NOTAGS, 'Phone 1', VALUE_OPTIONAL),
-                    'phone2'      => new \external_value(PARAM_NOTAGS, 'Phone 2', VALUE_OPTIONAL),
-                    'department'  => new \external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
-                    'institution' => new \external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
-                    'idnumber'    => new \external_value(
+                    'address'     => new external_value(PARAM_TEXT, 'Postal address', VALUE_OPTIONAL),
+                    'phone1'      => new external_value(PARAM_NOTAGS, 'Phone 1', VALUE_OPTIONAL),
+                    'phone2'      => new external_value(PARAM_NOTAGS, 'Phone 2', VALUE_OPTIONAL),
+                    'department'  => new external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
+                    'institution' => new external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
+                    'idnumber'    => new external_value(
                         PARAM_RAW,
                         'An arbitrary ID code number perhaps from the institution',
                         VALUE_OPTIONAL
                     ),
-                    'interests'   => new \external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
-                    'firstaccess' => new \external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
-                    'lastaccess'  => new \external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
-                    'lastcourseaccess'  => new \external_value(PARAM_INT, 'last access to the course (0 if never)', VALUE_OPTIONAL),
-                    'description' => new \external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
-                    'descriptionformat' => new \external_format_value('description', VALUE_OPTIONAL),
-                    'city'        => new \external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
-                    'country'     => new \external_value(
+                    'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
+                    'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
+                    'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
+                    'lastcourseaccess'  => new external_value(PARAM_INT, 'last access to the course (0 if never)', VALUE_OPTIONAL),
+                    'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
+                    'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
+                    'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
+                    'country'     => new external_value(
                         PARAM_ALPHA,
                         'Home country code of the user, such as AU or CZ',
                         VALUE_OPTIONAL
                     ),
-                    'profileimageurlsmall' => new \external_value(
+                    'profileimageurlsmall' => new external_value(
                         PARAM_URL,
                         'User image profile URL - small version',
                         VALUE_OPTIONAL
                     ),
-                    'profileimageurl' => new \external_value(PARAM_URL, 'User image profile URL - big version', VALUE_OPTIONAL),
-                    'customfields' => new \external_multiple_structure(
-                        new \external_single_structure(
+                    'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version', VALUE_OPTIONAL),
+                    'customfields' => new external_multiple_structure(
+                        new external_single_structure(
                             [
-                                'type'  => new \external_value(
+                                'type'  => new external_value(
                                     PARAM_ALPHANUMEXT,
                                     'The type of the custom field - text field, checkbox...'
                                 ),
-                                'value' => new \external_value(PARAM_RAW, 'The value of the custom field'),
-                                'name' => new \external_value(PARAM_RAW, 'The name of the custom field'),
-                                'shortname' => new \external_value(
+                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
+                                'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
+                                'shortname' => new external_value(
                                     PARAM_RAW,
                                     'The shortname of the custom field - to be able to build the field class in the code'
                                 ),
@@ -340,46 +350,46 @@ class get_enrolled_users extends \external_api {
                         'User custom fields (also known as user profil fields)',
                         VALUE_OPTIONAL
                     ),
-                    'groups' => new \external_multiple_structure(
-                        new \external_single_structure(
+                    'groups' => new external_multiple_structure(
+                        new external_single_structure(
                             [
-                                'id'  => new \external_value(PARAM_INT, 'group id'),
-                                'name' => new \external_value(PARAM_RAW, 'group name'),
-                                'description' => new \external_value(PARAM_RAW, 'group description'),
-                                'descriptionformat' => new \external_format_value('description'),
+                                'id'  => new external_value(PARAM_INT, 'group id'),
+                                'name' => new external_value(PARAM_RAW, 'group name'),
+                                'description' => new external_value(PARAM_RAW, 'group description'),
+                                'descriptionformat' => new external_format_value('description'),
                             ]
                         ),
                         'user groups',
                         VALUE_OPTIONAL
                     ),
-                    'roles' => new \external_multiple_structure(
-                        new \external_single_structure(
+                    'roles' => new external_multiple_structure(
+                        new external_single_structure(
                             [
-                                'roleid'       => new \external_value(PARAM_INT, 'role id'),
-                                'name'         => new \external_value(PARAM_RAW, 'role name'),
-                                'shortname'    => new \external_value(PARAM_ALPHANUMEXT, 'role shortname'),
-                                'sortorder'    => new \external_value(PARAM_INT, 'role sortorder'),
+                                'roleid'       => new external_value(PARAM_INT, 'role id'),
+                                'name'         => new external_value(PARAM_RAW, 'role name'),
+                                'shortname'    => new external_value(PARAM_ALPHANUMEXT, 'role shortname'),
+                                'sortorder'    => new external_value(PARAM_INT, 'role sortorder'),
                             ]
                         ),
                         'user roles',
                         VALUE_OPTIONAL
                     ),
-                    'preferences' => new \external_multiple_structure(
-                        new \external_single_structure(
+                    'preferences' => new external_multiple_structure(
+                        new external_single_structure(
                             [
-                                'name'  => new \external_value(PARAM_RAW, 'The name of the preferences'),
-                                'value' => new \external_value(PARAM_RAW, 'The value of the custom field'),
+                                'name'  => new external_value(PARAM_RAW, 'The name of the preferences'),
+                                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
                             ]
                         ),
                         'User preferences',
                         VALUE_OPTIONAL
                     ),
-                    'enrolledcourses' => new \external_multiple_structure(
-                        new \external_single_structure(
+                    'enrolledcourses' => new external_multiple_structure(
+                        new external_single_structure(
                             [
-                                'id'  => new \external_value(PARAM_INT, 'Id of the course'),
-                                'fullname' => new \external_value(PARAM_RAW, 'Fullname of the course'),
-                                'shortname' => new \external_value(PARAM_RAW, 'Shortname of the course'),
+                                'id'  => new external_value(PARAM_INT, 'Id of the course'),
+                                'fullname' => new external_value(PARAM_RAW, 'Fullname of the course'),
+                                'shortname' => new external_value(PARAM_RAW, 'Shortname of the course'),
                             ]
                         ),
                         'Courses where the user is enrolled - limited by which courses the user is able to see',
